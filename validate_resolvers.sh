@@ -25,7 +25,8 @@ SWEEP_OUTFILE=$(mktemp)
 UP_OUTFILE=up
 OUTFILE=resolvers-confirmed-$(date +%Y-%m-%d).lst
 PPS_RATE=2048
-TEST_DOMAIN=google.com
+TEST_DOMAIN=linkedin.com
+EXPECTED_IP=108.174.10.10
 TMPDIR=tmp
 OUTDIR=output
 TIMEOUT=2
@@ -47,7 +48,7 @@ do
     for OPEN_SERVER in $(cat "${PROTOCOL_OUTFILE}")
     do
         echo -n "Try $OPEN_SERVER via ${PROTOCOL} ..."
-        dig -t a +time=${TIMEOUT} +${FLAG}tcp $TEST_DOMAIN @$OPEN_SERVER 2>&1 1>/dev/null && echo "$OPEN_SERVER" >> "${OUTDIR}/${PROTOCOL}-${OUTFILE}"
+        dig -t a +time=${TIMEOUT} +${FLAG}tcp $TEST_DOMAIN @$OPEN_SERVER | grep $EXPECTED_IP 2>&1 1>/dev/null && echo "$OPEN_SERVER" >> "${OUTDIR}/${PROTOCOL}-${OUTFILE}"
         if [ "$?" -eq "0" ]; then
             echo " open !!"
         else
